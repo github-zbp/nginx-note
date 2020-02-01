@@ -1,0 +1,93 @@
+Nginx的3个主要的应用场景
+1.静态资源服务
+2.反向代理服务
+3.API服务
+
+优点：
+高并发下达到高性能
+可扩展性（有很多第三方插件），高可靠性（很难宕机）
+热部署
+BSD许可证
+
+Nginx的组成：
+二进制可执行文件
+Nginx.conf配置文件
+access.log 访问日志，记录每一条http请求
+error.log错误日志
+
+Nginx的编译安装：
+进入http://nginx.org/en/download.html下载nginx包
+
+tar -xzf nginx-1.16.1.tar.gz
+cd nginx-1.16.1
+./configure --prefix=/usr/local/nginx     #configure完成后会生成一些中间文件在objs目录；里面有一个ngx_modules.c文件，里面列举着待会编译时会安装哪些模块。
+
+make
+make install
+
+cd /usr/local/nginx && ll
+#conf,html,logs,sbin 四个目录，放啥东西的一目了然
+
+
+====================================
+
+Nginx的配置语法
+1.配置文件有指令和指令块构成
+指令以;结尾，指令与参数将以空格分开
+指令块以{}大括号将多条指令组织在一起。有些指令块有名字有些没有。
+
+2.include语句可以引入多个配置文件
+
+3.使用$表示使用变量
+
+4.部分指令的参数支持正则
+
+Nginx中的时间单位：
+ms 毫秒
+s   秒
+m   分钟
+h   小时
+d   天
+w   周
+M   月
+y   年
+
+Nginx中空间单位
+空   字节
+k/K  m/M    g/G
+
+Nginx 基本命令
+启动：nginx
+重启：nginx -s reload
+帮助：-h
+使用指定的配置文件启动：-c 
+指定新的配置: -g
+指定运行目录：-p 
+发送信号：-s 
+如  nginx -s reload 重启 
+    nginx -s stop   停止
+    nginx -s quit   优雅的停止
+    nginx -s reopen 重新开始记录日志文件
+    
+测试配置文件是否有语法错误： -t
+打印 nginx 的版本信息、编译等： -v
+
+注意：nginx -s reload 可以在不停止对客户服务的情况下重新加载配置文件；所以虽然运行这条命令没有停止服务再开启服务，但是重新加载了配置文件，其实也算是一种重启。
+
+接下来做3个小演示：
+首先开启nginx服务，默认监听80端口
+
+nginx
+此时在浏览器输入ip即可访问到nginx的欢迎首页
+
+1.重载配置文件
+# 将监听端口修改为8080并重启
+vi /usr/local/nginx/conf/nginx.conf
+
+listen       8080;
+
+nginx -s reload
+ps -aux|grep :8080
+
+2.热部署
+所谓的热部署就是在不停止nginx服务的条件下更行nginx的版本。
